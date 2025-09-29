@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --medical-primary: hsl(158, 43%, 40%);
+  --medical-accent: hsl(25, 85%, 53%);
+  --medical-light: hsl(158, 43%, 95%);
+  --medical-dark: hsl(158, 43%, 20%);
+}
+
+.medical-card {
+  @apply bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden;
+}
+
+.medical-button-primary {
+  @apply bg-medical-primary text-white px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity;
+}
+
+.medical-search-input {
+  @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-medical-primary focus:border-transparent outline-none;
+}
+
+.glass-effect {
+  @apply backdrop-blur-sm bg-white/80;
+}

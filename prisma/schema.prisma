@@ -1,0 +1,240 @@
+// CHARAK API - Medical Coding System Database Schema
+// Comprehensive medical database with dual coding system support
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // Hashed password
+  role      UserRole
+  email     String?  @unique
+  firstName String?
+  lastName  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  sessions     Session[]
+  diagnoses    Diagnosis[] @relation("DoctorDiagnoses")
+  
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+// Medical Disorders with Dual Coding System
+model Disorder {
+  id          String @id @default(cuid())
+  englishName String
+  sanskritName String
+  icd11Code   String
+  namasteCode String
+  category    String
+  description String?
+  confidence  Int    @default(100)
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  diagnoses   Diagnosis[]
+  symptoms    DisorderSymptom[]
+  
+  @@map("disorders")
+  @@index([englishName])
+  @@index([sanskritName])
+  @@index([icd11Code])
+  @@index([namasteCode])
+}
+
+// Patient Management with ABHA Integration
+model Patient {
+  id          String    @id @default(cuid())
+  abhaId      String    @unique
+  firstName   String?
+  lastName    String?
+  dateOfBirth DateTime?
+  gender      Gender?
+  phone       String?
+  email       String?
+  address     String?
+  city        String?
+  state       String?
+  pincode     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  diagnoses   Diagnosis[]
+  history     PatientHistory[]
+  
+  @@map("patients")
+  @@index([abhaId])
+}
+
+// Diagnosis Records
+model Diagnosis {
+  id          String   @id @default(cuid())
+  patientId   String
+  disorderId  String
+  doctorId    String
+  sessionId   String?
+  notes       String?
+  severity    Int?     // 1-10 scale
+  status      DiagnosisStatus @default(ACTIVE)
+  consentGiven Boolean @default(false)
+  diagnosedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  disorder  Disorder @relation(fields: [disorderId], references: [id])
+  doctor    User     @relation("DoctorDiagnoses", fields: [doctorId], references: [id])
+  
+  @@map("diagnoses")
+  @@index([patientId])
+  @@index([disorderId])
+  @@index([doctorId])
+  @@index([diagnosedAt])
+}
+
+// Patient History Tracking
+model PatientHistory {
+  id        String   @id @default(cuid())
+  patientId String
+  action    String   // "diagnosis_added", "treatment_updated", etc.
+  details   Json?    // Flexible JSON data
+  createdAt DateTime @default(now())
+  
+  patient Patient @relation(fields: [patientId], references: [id])
+  
+  @@map("patient_history")
+  @@index([patientId])
+  @@index([createdAt])
+}
+
+// Symptoms and Disorder Relationships
+model Symptom {
+  id           String @id @default(cuid())
+  englishName  String
+  sanskritName String?
+  description  String?
+  createdAt    DateTime @default(now())
+  
+  disorders DisorderSymptom[]
+  
+  @@map("symptoms")
+}
+
+model DisorderSymptom {
+  id         String @id @default(cuid())
+  disorderId String
+  symptomId  String
+  relevance  Int    @default(50) // 1-100 scale
+  
+  disorder Disorder @relation(fields: [disorderId], references: [id])
+  symptom  Symptom  @relation(fields: [symptomId], references: [id])
+  
+  @@unique([disorderId, symptomId])
+  @@map("disorder_symptoms")
+}
+
+// Analytics and Reporting
+model AnalyticsData {
+  id        String   @id @default(cuid())
+  region    String
+  state     String?
+  disorder  String
+  ageGroup  String
+  gender    Gender?
+  cases     Int
+  trend     TrendType
+  period    String   // "2024-Q1", "2024-09", etc.
+  createdAt DateTime @default(now())
+  
+  @@map("analytics_data")
+  @@index([region])
+  @@index([disorder])
+  @@index([period])
+}
+
+// EMR Usage Tracking
+model EMRUsage {
+  id           String   @id @default(cuid())
+  sectorType   String   // "Public", "Private", "Ayush"
+  region       String
+  totalCenters Int
+  adoptedCenters Int
+  adoptionRate Float
+  month        String   // "2024-09"
+  createdAt    DateTime @default(now())
+  
+  @@map("emr_usage")
+  @@index([sectorType])
+  @@index([region])
+  @@index([month])
+}
+
+// API Usage Logging
+model APIUsage {
+  id         String   @id @default(cuid())
+  endpoint   String
+  method     String
+  userId     String?
+  ipAddress  String?
+  userAgent  String?
+  statusCode Int
+  responseTime Int?   // milliseconds
+  createdAt  DateTime @default(now())
+  
+  @@map("api_usage")
+  @@index([endpoint])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Enums
+enum UserRole {
+  DOCTOR
+  GOVERNMENT
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum DiagnosisStatus {
+  ACTIVE
+  RESOLVED
+  CHRONIC
+  FOLLOW_UP
+}
+
+enum TrendType {
+  INCREASING
+  DECREASING
+  STABLE
+}
