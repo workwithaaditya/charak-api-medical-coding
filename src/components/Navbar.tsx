@@ -11,17 +11,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
   if (!user) return null;
 
-  const doctorNav = [
-    { id: 'dashboard', label: 'Medical Search' },
-    { id: 'api', label: 'API Docs' }
+  const navItems = [
+    { id: 'dashboard', label: 'CHARAK EMR' },
+    { id: 'api', label: 'API Documentation' }
   ];
-
-  const govNav = [
-    { id: 'analytics', label: 'Analytics Dashboard' },
-    { id: 'api', label: 'API Docs' }
-  ];
-
-  const navItems = user.role === 'DOCTOR' ? doctorNav : govNav;
 
   return (
     <nav className="bg-white shadow-lg border-b-2 border-medical-primary">

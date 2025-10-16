@@ -176,6 +176,19 @@ async function seedDatabase() {
       phone: '+91-7654321098',
       city: 'Hyderabad',
       state: 'Telangana'
+    },
+    {
+      abhaId: '55789012345678',
+      firstName: 'Aaditya',
+      lastName: 'Negi',
+      dateOfBirth: new Date('1995-05-20'),
+      gender: Gender.MALE,
+      phone: '+91-9123456789',
+      email: 'aaditya.negi@email.com',
+      address: '123 Mountain View Society',
+      city: 'Dehradun',
+      state: 'Uttarakhand',
+      pincode: '248001'
     }
   ]
 
