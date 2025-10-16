@@ -17,7 +17,9 @@
     "db:reset": "prisma migrate reset",
     "test:db": "tsx test-db.ts",
     "health-check": "node health-check.js",
-    "test:quick": "node health-check.js --quick"
+    "test:quick": "node health-check.js --quick",
+    "start:all": "./start.sh",
+    "setup": "npm install && npx prisma generate && npx prisma db push && npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",

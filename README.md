@@ -4,6 +4,14 @@ A comprehensive medical coding system website that bridges traditional Ayurvedic
 
 ## 🚀 Features
 
+### **Complete RESTful API Backend**
+- **Express.js API Server** with comprehensive endpoints
+- **SQLite Database** with Prisma ORM for type-safe queries
+- **JWT Authentication** for secure user sessions
+- **Automatic API Logging** for usage tracking and analytics
+- **RESTful Architecture** following best practices
+- **Comprehensive Error Handling** with detailed error messages
+
 ### **Professional Medical Design System**
 - Sophisticated green (#158 43% 40%) and orange accent (#25 85% 53%) color scheme
 - Comprehensive HSL-based design tokens for theming
@@ -39,14 +47,91 @@ A comprehensive medical coding system website that bridges traditional Ayurvedic
 
 ## 🛠️ Technology Stack
 
+- **Backend**: Node.js + Express.js + TypeScript
+- **Database**: SQLite with Prisma ORM
+- **Authentication**: JWT (JSON Web Tokens)
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS with comprehensive design system
 - **State Management**: React Context for authentication and session data
 - **UI Components**: Custom medical-themed components
 - **Icons**: Lucide React for consistent iconography
-- **Charts**: Recharts for data visualizations (if needed)
+- **Charts**: Recharts for data visualizations
+
+## 🏗️ API Architecture
+
+The CHARAK API provides a complete backend system with the following endpoints:
+
+### Core API Endpoints:
+- **Authentication**: `/api/auth/login` - JWT-based authentication
+- **Disorders**: CRUD operations and intelligent search
+  - Search, filter by category, get by ID or code (ICD-11/NAMASTE)
+- **Patients**: Full patient management
+  - Search, ABHA ID lookup, create/update, medical history
+- **Diagnoses**: Diagnosis management
+  - Create, read, update diagnoses with consent tracking
+- **Analytics**: Comprehensive reporting
+  - Trend analysis, EMR usage stats, disease analytics, dashboards
+
+### API Features:
+- **Automatic Request Logging**: All API calls are logged for analytics
+- **Error Handling**: Consistent error responses across all endpoints
+- **Type Safety**: Full TypeScript support with Prisma Client
+- **Query Optimization**: Efficient database queries with Prisma
+- **Flexible Filtering**: Support for search, pagination, and filtering
+
+📖 **[Complete API Documentation](./API_DOCUMENTATION.md)**
 
 ## 📦 Installation & Setup
+
+### Prerequisites
+- Node.js 18+ and npm
+- Git
+
+### Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd charak-api
+   ```
+
+2. **Install and setup everything**
+   ```bash
+   npm run setup
+   ```
+   This will:
+   - Install all dependencies
+   - Generate Prisma client
+   - Create database schema
+   - Seed demo data
+
+3. **Start the complete system**
+   
+   **Option 1: Start API and Frontend together**
+   ```bash
+   npm run start:all
+   ```
+   
+   **Option 2: Start them separately**
+   
+   Terminal 1 - Start API server:
+   ```bash
+   npm run server
+   # API will run on http://localhost:3001
+   ```
+   
+   Terminal 2 - Start frontend:
+   ```bash
+   npm run dev
+   # Frontend will run on http://localhost:5173
+   ```
+
+4. **Access the application**
+   - Frontend: http://localhost:5173
+   - API: http://localhost:3001
+   - API Health Check: http://localhost:3001/api/health
+
+### Manual Setup (Step by Step)
 
 1. **Clone the repository**
    ```bash
@@ -68,16 +153,23 @@ A comprehensive medical coding system website that bridges traditional Ayurvedic
    npx prisma db push
    
    # Seed with demo data
-   npx ts-node prisma/seed.ts
+   npx tsx prisma/seed.ts
    ```
 
-4. **Start development server**
+4. **Start API server**
+   ```bash
+   npm run server
+   # or for auto-reload during development
+   npm run server:dev
+   ```
+
+5. **Start frontend (in a new terminal)**
    ```bash
    npm run dev
    ```
 
-5. **Open your browser**
-   Navigate to `http://localhost:3000`
+6. **Open your browser**
+   Navigate to `http://localhost:5173`
 
 ## 🗄️ Database
 
@@ -122,10 +214,28 @@ The application uses **SQLite** with **Prisma ORM** for easy setup and robust da
 
 ## 📚 Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
+### Development
+- `npm run dev` - Start frontend development server (port 5173)
+- `npm run server` - Start API backend server (port 3001)
+- `npm run server:dev` - Start API with auto-reload on changes
+- `npm run start:all` - Start both API and frontend together
+
+### Database
+- `npm run db:generate` - Generate Prisma client
+- `npm run db:push` - Push schema changes to database
+- `npm run db:seed` - Seed database with demo data
+- `npm run db:studio` - Open Prisma Studio (database GUI)
+- `npm run db:reset` - Reset database (caution: deletes all data)
+
+### Build & Test
+- `npm run build` - Build frontend for production
 - `npm run lint` - Run ESLint
 - `npm run preview` - Preview production build
+- `npm run test:db` - Test database connection
+- `npm run health-check` - Check API health status
+
+### Setup
+- `npm run setup` - Complete setup (install + db setup + seed)
 
 ## 🎨 Design System
 
@@ -176,11 +286,47 @@ src/
 ## 📖 API Integration
 
 The application includes comprehensive API documentation with:
-- Authentication examples
-- Endpoint specifications
-- Multi-language code samples (JavaScript, Python, Java)
-- Response format documentation
-- Integration best practices
+- Complete endpoint specifications
+- Request/response examples
+- Multi-language code samples (JavaScript, Python, cURL)
+- Authentication flow
+- Error handling guidelines
+- Best practices for production use
+
+See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for complete details.
+
+### Quick API Examples:
+
+**Login:**
+```bash
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"demodoctor","password":"123"}'
+```
+
+**Search Disorders:**
+```bash
+curl "http://localhost:3001/api/disorders/search?query=fever"
+```
+
+**Get Patient by ABHA ID:**
+```bash
+curl "http://localhost:3001/api/patients/abha/12345678901234"
+```
+
+## 🏥 Database Schema
+
+The application uses a comprehensive medical database schema:
+
+- **Users**: Authentication and role management (Doctor, Government, Admin)
+- **Patients**: Patient demographics and ABHA integration
+- **Disorders**: Medical conditions with dual coding (ICD-11 + NAMASTE)
+- **Diagnoses**: Medical diagnoses with consent tracking
+- **Analytics**: Anonymized health data for reporting
+- **EMR Usage**: System adoption tracking
+- **API Usage**: Request logging and analytics
+
+All data is stored in SQLite with Prisma ORM for type-safe queries.
 
 ## 🎯 Future Enhancements
 
