@@ -1,40 +1,49 @@
-import { mockUsers } from '../lib/mockData'
+import { ApiClient } from '../lib/api';
 
 export interface LoginCredentials {
   username: string
   password: string
 }
 
+export interface User {
+  id: string;
+  username: string;
+  role: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: User;
+}
+
 export class AuthService {
-  // Validate login credentials using mock data
-  static async validateLogin(credentials: LoginCredentials) {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    const user = mockUsers.find(u => u.username === credentials.username)
-    
-    if (!user) {
-      return null
-    }
-
-    // Direct password comparison for demo
-    if (user.password === credentials.password) {
-      return {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+  // Validate login credentials using API
+  static async validateLogin(credentials: LoginCredentials): Promise<User | null> {
+    try {
+      const response = await ApiClient.post<LoginResponse>('/api/auth/login', credentials);
+      
+      // Store token in localStorage
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
       }
+      
+      return response.user;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return null;
     }
-
-    return null
   }
 
-  // Find user by username
-  static async findUserByUsername(username: string) {
-    await new Promise(resolve => setTimeout(resolve, 100))
-    return mockUsers.find(u => u.username === username)
+  // Get stored auth token
+  static getAuthToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
+
+  // Clear auth token (logout)
+  static logout(): void {
+    localStorage.removeItem('authToken');
   }
 }

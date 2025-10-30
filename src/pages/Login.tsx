@@ -18,16 +18,16 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-medical-light to-white flex items-center justify-center">
-      <div className="medical-card w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-medical-primary mb-2">CHARAK API</h1>
-          <p className="text-gray-600">Advanced Medical Coding System</p>
+    <div className="min-h-screen bg-gradient-to-br from-medical-light to-white flex items-center justify-center p-4">
+      <div className="medical-card w-full max-w-md p-6">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-medical-primary mb-1">CHARAK API</h1>
+          <p className="text-sm text-gray-600">Advanced Medical Coding System</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Username
             </label>
             <input
@@ -41,7 +41,7 @@ const Login: React.FC = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
@@ -55,18 +55,18 @@ const Login: React.FC = () => {
           </div>
           
           {error && (
-            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+            <div className="text-red-600 text-xs bg-red-50 p-2 rounded">
               {error}
             </div>
           )}
           
-          <button type="submit" className="w-full medical-button-primary">
+          <button type="submit" className="w-full medical-button-primary py-2">
             Sign In
           </button>
         </form>
         
-        <div className="mt-6 text-sm text-gray-600 bg-gray-50 p-4 rounded-md">
-          <p className="font-medium mb-2">Demo Credentials:</p>
+        <div className="mt-4 text-xs text-gray-600 bg-gray-50 p-3 rounded">
+          <p className="font-medium mb-1">Demo Credentials:</p>
           <p><strong>Doctor:</strong> demodoctor / 123</p>
           <p><strong>Government:</strong> GovAgent / 123</p>
         </div>

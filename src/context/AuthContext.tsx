@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUser({
           id: userData.id,
           username: userData.username,
-          role: userData.role,
+          role: userData.role as 'DOCTOR' | 'GOVERNMENT' | 'ADMIN',
           email: userData.email || undefined,
           firstName: userData.firstName || undefined,
           lastName: userData.lastName || undefined,

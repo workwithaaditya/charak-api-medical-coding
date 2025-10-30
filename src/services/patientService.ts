@@ -1,103 +1,110 @@
-import { mockPatients, mockDisorders } from '../lib/mockData'
+import { ApiClient } from '../lib/api';
 
-export interface CreateDiagnosisData {
-  patientId: string
-  disorderId: string
-  doctorId: string
-  notes?: string
-  severity?: number
-  consentGiven: boolean
+export interface Patient {
+  id: string;
+  abhaId: string;
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  phone?: string;
+  email?: string;
+  city?: string;
+  state?: string;
+  diagnoses?: any[];
 }
 
-// In-memory storage for new diagnoses (in production, this would be in a database)
-let diagnosisCounter = 4
-const newDiagnoses: any[] = []
+export interface CreateDiagnosisData {
+  patientId: string;
+  disorderId: string;
+  doctorId: string;
+  notes?: string;
+  severity?: number;
+  consentGiven: boolean;
+}
+
+export interface PatientStats {
+  totalPatients: number;
+  totalDiagnoses: number;
+  activePatients: number;
+  recentDiagnoses?: number;
+}
 
 export class PatientService {
   // Find patient by ABHA ID
-  static async findPatientByAbhaId(abhaId: string) {
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    const patient = mockPatients.find(p => p.abhaId === abhaId)
-    if (patient) {
-      // Add any new diagnoses that were added during this session
-      const additionalDiagnoses = newDiagnoses.filter(d => d.patientId === patient.id)
-      return {
-        ...patient,
-        diagnoses: [...patient.diagnoses, ...additionalDiagnoses]
-      }
+  static async findPatientByAbhaId(abhaId: string): Promise<Patient | null> {
+    try {
+      return await ApiClient.get<Patient>(`/api/patients/abha/${abhaId}`);
+    } catch (error) {
+      console.error('Error finding patient:', error);
+      return null;
     }
-    return null
   }
 
   // Add diagnosis
   static async addDiagnosis(data: CreateDiagnosisData) {
-    await new Promise(resolve => setTimeout(resolve, 300))
-    
-    const disorder = mockDisorders.find(d => d.id === data.disorderId)
-    if (!disorder) {
-      throw new Error('Disorder not found')
+    try {
+      return await ApiClient.post('/api/diagnoses', data);
+    } catch (error) {
+      console.error('Error adding diagnosis:', error);
+      throw error;
     }
-
-    const diagnosis = {
-      id: `diagnosis_${diagnosisCounter++}`,
-      patientId: data.patientId,
-      disorderId: data.disorderId,
-      doctorId: data.doctorId,
-      notes: data.notes,
-      severity: data.severity,
-      consentGiven: data.consentGiven,
-      diagnosedAt: new Date(),
-      disorder: disorder,
-      doctor: {
-        username: 'demodoctor',
-        firstName: 'Dr. Aditya',
-        lastName: 'Sharma'
-      }
-    }
-
-    // Add to in-memory storage
-    newDiagnoses.push(diagnosis)
-
-    return diagnosis
   }
 
   // Get patient medical history
   static async getPatientHistory(abhaId: string, limit: number = 20) {
-    await new Promise(resolve => setTimeout(resolve, 300))
-    
-    const patient = mockPatients.find(p => p.abhaId === abhaId)
-    if (!patient) {
-      throw new Error('Patient not found')
+    try {
+      const patient = await this.findPatientByAbhaId(abhaId);
+      return patient?.diagnoses?.slice(0, limit) || [];
+    } catch (error) {
+      console.error('Error fetching patient history:', error);
+      return [];
     }
-
-    return patient.diagnoses.slice(0, limit)
   }
 
   // Get patient statistics
-  static async getPatientStats() {
-    await new Promise(resolve => setTimeout(resolve, 200))
-    
-    const totalDiagnoses = mockPatients.reduce((sum, p) => sum + p.diagnoses.length, 0) + newDiagnoses.length
-    
-    return {
-      totalPatients: mockPatients.length,
-      totalDiagnoses: totalDiagnoses,
-      activePatients: mockPatients.length,
+  static async getPatientStats(): Promise<PatientStats> {
+    try {
+      return await ApiClient.get<PatientStats>('/api/patients/stats/summary');
+    } catch (error) {
+      console.error('Error fetching patient stats:', error);
+      return {
+        totalPatients: 0,
+        totalDiagnoses: 0,
+        activePatients: 0
+      };
     }
   }
 
   // Search patients by name or ABHA ID
-  static async searchPatients(query: string, limit: number = 10) {
-    await new Promise(resolve => setTimeout(resolve, 200))
-    
-    const results = mockPatients.filter(patient =>
-      patient.abhaId.includes(query) ||
-      patient.firstName?.toLowerCase().includes(query.toLowerCase()) ||
-      patient.lastName?.toLowerCase().includes(query.toLowerCase()) ||
-      patient.phone?.includes(query)
-    )
+  static async searchPatients(query: string, limit: number = 10): Promise<Patient[]> {
+    try {
+      return await ApiClient.get<Patient[]>(
+        `/api/patients/search?query=${encodeURIComponent(query)}&limit=${limit}`
+      );
+    } catch (error) {
+      console.error('Error searching patients:', error);
+      return [];
+    }
+  }
 
-    return results.slice(0, limit)
+  // Create new patient
+  static async createPatient(patientData: Partial<Patient>): Promise<Patient | null> {
+    try {
+      return await ApiClient.post<Patient>('/api/patients', patientData);
+    } catch (error) {
+      console.error('Error creating patient:', error);
+      return null;
+    }
+  }
+
+  // Update patient
+  static async updatePatient(id: string, patientData: Partial<Patient>): Promise<Patient | null> {
+    try {
+      return await ApiClient.put<Patient>(`/api/patients/${id}`, patientData);
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      return null;
+    }
   }
 }
