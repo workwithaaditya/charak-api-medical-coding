@@ -19,12 +19,23 @@ model User {
   email     String?  @unique
   firstName String?
   lastName  String?
+  department String? // User's department/college
+  year      Int?     // Academic year
+  profilePicture String?
+  isEmailVerified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
   // Relations
   sessions     Session[]
   diagnoses    Diagnosis[] @relation("DoctorDiagnoses")
+  
+  // Campus Connect Hub Relations
+  createdEvents     Event[] @relation("EventCreator")
+  eventAttendees    EventAttendee[]
+  notifications     EventNotification[]
+  digests          EventDigest[]
+  eventPreferences UserEventPreference?
   
   @@map("users")
 }
@@ -237,4 +248,176 @@ enum TrendType {
   INCREASING
   DECREASING
   STABLE
+}
+
+// ==================== CAMPUS CONNECT HUB MODELS ====================
+
+// Events Model for Campus Connect Hub
+model Event {
+  id            String      @id @default(cuid())
+  title         String
+  description   String
+  aiSummary     String?     // AI-generated short summary
+  longDescription String?   // Detailed description
+  eventDate     DateTime
+  endDate       DateTime?
+  location      String
+  venue         String?
+  department    String?
+  organizer     String
+  organizerEmail String?
+  eventType     EventType
+  category      EventCategory
+  tags          String?     // Comma-separated tags like "tech,workshop,free"
+  maxAttendees  Int?
+  currentAttendees Int     @default(0)
+  isPublic      Boolean     @default(true)
+  isApproved    Boolean     @default(false)
+  isFeatured    Boolean     @default(false)
+  registrationUrl String?
+  contactInfo   String?
+  imageUrl      String?
+  createdById   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  // Relations
+  createdBy     User        @relation("EventCreator", fields: [createdById], references: [id])
+  attendees     EventAttendee[]
+  notifications EventNotification[]
+  
+  @@map("events")
+  @@index([eventDate])
+  @@index([department])
+  @@index([eventType])
+  @@index([category])
+  @@index([isApproved])
+}
+
+// Event Attendees
+model EventAttendee {
+  id          String   @id @default(cuid())
+  eventId     String
+  userId      String
+  status      AttendanceStatus @default(REGISTERED)
+  registeredAt DateTime @default(now())
+  attendedAt  DateTime?
+  
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([eventId, userId])
+  @@map("event_attendees")
+}
+
+// Event Notifications & Digests
+model EventNotification {
+  id          String   @id @default(cuid())
+  eventId     String
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  isRead      Boolean  @default(false)
+  sentAt      DateTime @default(now())
+  
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("event_notifications")
+  @@index([userId, isRead])
+}
+
+// Weekly/Daily Digests
+model EventDigest {
+  id          String   @id @default(cuid())
+  userId      String?  // null means it's a general digest
+  title       String
+  content     String   // AI-generated digest content
+  digestType  DigestType
+  weekStart   DateTime?
+  weekEnd     DateTime?
+  digestDate  DateTime?
+  isGenerated Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("event_digests")
+  @@index([digestType, createdAt])
+}
+
+// User Preferences for Events
+model UserEventPreference {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  departments     String?  // Comma-separated preferred departments
+  eventTypes      String?  // Comma-separated preferred event types
+  categories      String?  // Comma-separated preferred categories
+  digestFrequency DigestFrequency @default(WEEKLY)
+  emailNotifications Boolean @default(true)
+  pushNotifications  Boolean @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_event_preferences")
+}
+
+// Additional Enums for Campus Connect Hub
+enum EventType {
+  WORKSHOP
+  SEMINAR
+  CONFERENCE
+  CLUB_MEETING
+  SPORTS
+  CULTURAL
+  HACKATHON
+  CAREER_FAIR
+  ACADEMIC
+  SOCIAL
+  OTHER
+}
+
+enum EventCategory {
+  TECHNOLOGY
+  ARTS
+  SCIENCE
+  BUSINESS
+  SPORTS
+  CULTURAL
+  ACADEMIC
+  CAREER
+  SOCIAL
+  HEALTH
+  OTHER
+}
+
+enum AttendanceStatus {
+  REGISTERED
+  ATTENDED
+  NO_SHOW
+  CANCELLED
+}
+
+enum NotificationType {
+  EVENT_REMINDER
+  EVENT_UPDATE
+  EVENT_CANCELLED
+  DIGEST
+  NEW_EVENT
+}
+
+enum DigestType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum DigestFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  NONE
 }

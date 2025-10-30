@@ -84,10 +84,10 @@ const GovernmentDashboard: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-4">
       {/* Disease Analytics Search */}
-      <div className="medical-card mb-6 p-6">
-        <h2 className="text-xl font-bold text-medical-primary mb-4">Disease Analytics Search</h2>
+      <div className="medical-card mb-4 p-4">
+        <h2 className="text-base font-bold text-medical-primary mb-2">Disease Analytics Search</h2>
         <input
           type="text"
           placeholder="Search for disease trends and analytics"
@@ -95,34 +95,34 @@ const GovernmentDashboard: React.FC = () => {
           onChange={(e) => searchDiseases(e.target.value)}
         />
         {loading && (
-          <div className="mt-3 text-center text-gray-500">
+          <div className="mt-2 text-center text-gray-500 text-sm">
             Loading analytics data...
           </div>
         )}
         {diseaseAnalytics && (
-          <div className="mt-4 p-3 bg-blue-50 rounded-md">
+          <div className="mt-3 p-2 bg-blue-50 rounded">
             <div className="text-sm font-medium">Found analytics for: {diseaseAnalytics.disorder || 'Selected condition'}</div>
             <div className="text-xs text-gray-600">Analysis results available</div>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         {/* Vata Imbalance Reports */}
-        <div className="medical-card p-6">
-          <h2 className="text-xl font-bold text-medical-primary mb-4">Vata Imbalance Reports</h2>
-          <div className="space-y-3">
+        <div className="medical-card p-4">
+          <h2 className="text-base font-bold text-medical-primary mb-3">Vata Imbalance Reports</h2>
+          <div className="space-y-2">
             {vataData.map((item, index) => (
               <div key={index} className="flex items-center justify-between">
-                <span className="font-medium">{item.state}</span>
+                <span className="font-medium text-sm">{item.state}</span>
                 <div className="flex items-center space-x-2 flex-1 ml-4">
-                  <div className="w-full bg-gray-200 rounded-full h-4">
+                  <div className="w-full bg-gray-200 rounded-full h-3">
                     <div 
-                      className="bg-medical-primary h-4 rounded-full transition-all duration-300"
+                      className="bg-medical-primary h-3 rounded-full transition-all duration-300"
                       style={{ width: `${item.severity}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-medium w-12">{item.severity}%</span>
+                  <span className="text-xs font-medium w-10">{item.severity}%</span>
                 </div>
               </div>
             ))}
@@ -130,18 +130,18 @@ const GovernmentDashboard: React.FC = () => {
         </div>
 
         {/* EMR Usage Breakdown */}
-        <div className="medical-card p-6">
-          <h2 className="text-xl font-bold text-medical-primary mb-4">EMR Usage Breakdown</h2>
-          <div className="space-y-4">
+        <div className="medical-card p-4">
+          <h2 className="text-base font-bold text-medical-primary mb-3">EMR Usage Breakdown</h2>
+          <div className="space-y-3">
             {getEmrDisplayData().map((item, index) => (
               <div key={index}>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium">{item.sector}</span>
-                  <span className="text-sm font-bold">{item.adoption}%</span>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-medium text-sm">{item.sector}</span>
+                  <span className="text-xs font-bold">{item.adoption}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className={`${item.color} h-3 rounded-full transition-all duration-300`}
+                    className={`${item.color} h-2 rounded-full transition-all duration-300`}
                     style={{ width: `${item.adoption}%` }}
                   ></div>
                 </div>
@@ -152,31 +152,31 @@ const GovernmentDashboard: React.FC = () => {
       </div>
 
       {/* Anonymized Trend Data */}
-      <div className="medical-card p-6">
-        <h2 className="text-xl font-bold text-medical-primary mb-4">Anonymized Trend Data</h2>
+      <div className="medical-card p-4">
+        <h2 className="text-base font-bold text-medical-primary mb-3">Anonymized Trend Data</h2>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b-2 border-medical-primary">
-                <th className="text-left p-3 font-semibold">Disorder Category</th>
-                <th className="text-left p-3 font-semibold">Region</th>
-                <th className="text-left p-3 font-semibold">Trend</th>
-                <th className="text-left p-3 font-semibold">Age Group</th>
-                <th className="text-left p-3 font-semibold">Cases</th>
+              <tr className="border-b border-medical-primary">
+                <th className="text-left p-2 font-semibold text-sm">Disorder Category</th>
+                <th className="text-left p-2 font-semibold text-sm">Region</th>
+                <th className="text-left p-2 font-semibold text-sm">Trend</th>
+                <th className="text-left p-2 font-semibold text-sm">Age Group</th>
+                <th className="text-left p-2 font-semibold text-sm">Cases</th>
               </tr>
             </thead>
             <tbody>
               {analyticsData.map((item, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="p-3 font-medium">{item.disorder}</td>
-                  <td className="p-3">{item.region}</td>
-                  <td className="p-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTrendColor(item.trend)}`}>
+                  <td className="p-2 font-medium text-sm">{item.disorder}</td>
+                  <td className="p-2 text-sm">{item.region}</td>
+                  <td className="p-2">
+                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getTrendColor(item.trend)}`}>
                       {item.trend}
                     </span>
                   </td>
-                  <td className="p-3">{item.ageGroup}</td>
-                  <td className="p-3 font-semibold">{item.cases.toLocaleString()}</td>
+                  <td className="p-2 text-sm">{item.ageGroup}</td>
+                  <td className="p-2 font-semibold text-sm">{item.cases.toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -187,21 +187,21 @@ const GovernmentDashboard: React.FC = () => {
       {/* Disease Analytics Modal */}
       {showDiseaseModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-medical-primary">Disease Analytics: {selectedDisease}</h3>
+          <div className="bg-white p-4 rounded max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-base font-bold text-medical-primary">Disease Analytics: {selectedDisease}</h3>
               <button
                 onClick={() => setShowDiseaseModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                className="text-gray-500 hover:text-gray-700 text-lg font-bold"
               >
                 ×
               </button>
             </div>
             
-            <div className="space-y-4">
-              <div className="bg-medical-light p-4 rounded-md">
-                <h4 className="font-semibold mb-2">Regional Distribution</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="space-y-3">
+              <div className="bg-medical-light p-3 rounded">
+                <h4 className="font-semibold mb-2 text-sm">Regional Distribution</h4>
+                <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>North India: 35%</div>
                   <div>South India: 28%</div>
                   <div>West India: 22%</div>
@@ -209,18 +209,18 @@ const GovernmentDashboard: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-medical-light p-4 rounded-md">
-                <h4 className="font-semibold mb-2">Seasonal Trends</h4>
-                <div className="text-sm">
+              <div className="bg-medical-light p-3 rounded">
+                <h4 className="font-semibold mb-2 text-sm">Seasonal Trends</h4>
+                <div className="text-xs">
                   <div>Peak Season: Winter (Dec-Feb)</div>
                   <div>Lowest Incidence: Monsoon (Jun-Sep)</div>
                   <div>Growth Rate: +12% annually</div>
                 </div>
               </div>
               
-              <div className="bg-medical-light p-4 rounded-md">
-                <h4 className="font-semibold mb-2">Demographics</h4>
-                <div className="text-sm">
+              <div className="bg-medical-light p-3 rounded">
+                <h4 className="font-semibold mb-2 text-sm">Demographics</h4>
+                <div className="text-xs">
                   <div>Most Affected: Adults 25-45 years</div>
                   <div>Gender Ratio: 60% Male, 40% Female</div>
                   <div>Urban vs Rural: 70% Urban, 30% Rural</div>
